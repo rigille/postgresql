@@ -47,7 +47,7 @@ SELECT x.timestamp > '-infinity'::timestamptz AS ts_low,
 -- Test transaction with replication origin
 SELECT pg_replication_origin_create('regress_commit_ts: get_origin') != 0
   AS valid_roident;
-SELECT pg_replication_origin_session_setup('regress_commit_ts: get_origin');
+SELECT pg_replication_origin_session_setup('regress_commit_ts: get_origin', 0);
 SELECT txid_current() as txid_with_origin \gset
 SELECT x.timestamp > '-infinity'::timestamptz AS ts_low,
        x.timestamp <= now() AS ts_high,
