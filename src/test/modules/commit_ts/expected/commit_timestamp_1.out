@@ -84,7 +84,7 @@ SELECT pg_replication_origin_create('regress_commit_ts: get_origin') != 0
  t
 (1 row)
 
-SELECT pg_replication_origin_session_setup('regress_commit_ts: get_origin', 0);
+SELECT pg_replication_origin_session_setup('regress_commit_ts: get_origin');
  pg_replication_origin_session_setup 
 -------------------------------------
  

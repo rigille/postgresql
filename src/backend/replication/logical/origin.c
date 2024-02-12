@@ -1344,6 +1344,24 @@ pg_replication_origin_oid(PG_FUNCTION_ARGS)
  * Setup a replication origin for this session.
  */
 Datum
+pg_replication_origin_session_setup_nopid(PG_FUNCTION_ARGS)
+{
+	char	   *name;
+	RepOriginId origin;
+
+	replorigin_check_prerequisites(true, false);
+
+	name = text_to_cstring((text *) DatumGetPointer(PG_GETARG_DATUM(0)));
+	origin = replorigin_by_name(name, false);
+	replorigin_session_setup(origin, 0);
+
+	replorigin_session_origin = origin;
+
+	pfree(name);
+
+	PG_RETURN_VOID();
+}
+Datum
 pg_replication_origin_session_setup(PG_FUNCTION_ARGS)
 {
 	char	   *name;
@@ -1353,9 +1371,13 @@ pg_replication_origin_session_setup(PG_FUNCTION_ARGS)
 	replorigin_check_prerequisites(true, false);
 
 	name = text_to_cstring((text *) DatumGetPointer(PG_GETARG_DATUM(0)));
-	pid = PG_GETARG_INT32(1);
 	origin = replorigin_by_name(name, false);
-	replorigin_session_setup(origin, pid);
+	if (PG_ARGISNULL(1)){
+		replorigin_session_setup(origin, 0);
+	} else {
+		pid = PG_GETARG_INT32(1); 
+		replorigin_session_setup(origin, pid);
+	}
 
 	replorigin_session_origin = origin;
 
